@@ -1,0 +1,1134 @@
+{
+  "format": 2,
+  "name": "stamina_v1.02.00_infinite",
+  "version": "1.02.00",
+  "description": "Infinite Stamina \u2014 All stamina drains: sprint, flight, horse, climbing, aerial, swim, combat, guard, wrestle, mount, bow, vehicle.",
+  "author": "",
+  "patches": [
+    {
+      "game_file": "gamedata/skill.pabgb",
+      "changes": [
+        {
+          "entry": "Skill_CrowWing",
+          "rel_offset": 116,
+          "offset": 497051,
+          "label": "[Flight] CrowWing_hover -10.0 -> -0.001",
+          "original": "f0d8ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_CrowWing_Move",
+          "rel_offset": 116,
+          "offset": 497762,
+          "label": "[Flight] CrowWing_Move -10.0 -> -0.001",
+          "original": "f0d8ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_CrowWing_MoveFast",
+          "rel_offset": 116,
+          "offset": 498063,
+          "label": "[Flight] CrowWing_MoveFast -20.0 -> -0.001",
+          "original": "e0b1ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_CrowWing_Dash",
+          "rel_offset": 120,
+          "offset": 501148,
+          "label": "[Flight] CrowWing_Dash -30.0 -> -0.001",
+          "original": "d08affff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Damian_ShieldGlider",
+          "rel_offset": 116,
+          "offset": 498466,
+          "label": "[Flight] ShieldGlider_hover -10.0 -> -0.001",
+          "original": "f0d8ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Damian_ShieldGlider_MoveFast",
+          "rel_offset": 116,
+          "offset": 499212,
+          "label": "[Flight] ShieldGlider_MoveFast -20.0 -> -0.001",
+          "original": "e0b1ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Oongka_RocketPack",
+          "rel_offset": 116,
+          "offset": 499613,
+          "label": "[Flight] Oongka_RocketPack -10.0 -> -0.001",
+          "original": "f0d8ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Oongka_RocketPack_MoveFast",
+          "rel_offset": 120,
+          "offset": 500356,
+          "label": "[Flight] Oongka_RocketPack_MoveFast -20.0 -> -0.001",
+          "original": "e0b1ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Oongka_RocketPack_VerticalBoost",
+          "rel_offset": 120,
+          "offset": 500775,
+          "label": "[Flight] Oongka_RocketPack_VerticalBoost -20.0 -> -0.001",
+          "original": "e0b1ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_BasicMoveLv4",
+          "rel_offset": 116,
+          "offset": 330429,
+          "label": "[Sprint] BasicMoveLv4_sprint -8.0 -> -0.001",
+          "original": "c0e0ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_BasicMoveLv4_100",
+          "rel_offset": 116,
+          "offset": 330687,
+          "label": "[Sprint] BasicMoveLv4_100 -10.0 -> -0.001",
+          "original": "f0d8ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Damian_BasicMoveLv4_100",
+          "rel_offset": 116,
+          "offset": 331021,
+          "label": "[Sprint] Damian_BasicMoveLv4_100 -10.0 -> -0.001",
+          "original": "f0d8ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Oongka_BasicMoveLv4_100",
+          "rel_offset": 116,
+          "offset": 331355,
+          "label": "[Sprint] Oongka_BasicMoveLv4_100 -10.0 -> -0.001",
+          "original": "f0d8ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_WeaponMoveLv4",
+          "rel_offset": 116,
+          "offset": 327695,
+          "label": "[Sprint] WeaponMoveLv4_sprint -8.0 -> -0.001",
+          "original": "c0e0ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_WeaponMoveLv4_100",
+          "rel_offset": 116,
+          "offset": 327954,
+          "label": "[Sprint] WeaponMoveLv4_100 -10.0 -> -0.001",
+          "original": "f0d8ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_HorseWait",
+          "rel_offset": 120,
+          "offset": 1036767,
+          "label": "[Horse] HorseWait -31.1 -> -0.001",
+          "original": "a086",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseMoveLv1",
+          "rel_offset": 120,
+          "offset": 1037013,
+          "label": "[Horse] HorseMoveLv1 -31.1 -> -0.001",
+          "original": "a086",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseMoveLv2",
+          "rel_offset": 120,
+          "offset": 1037242,
+          "label": "[Horse] HorseMoveLv2 -31.1 -> -0.001",
+          "original": "a086",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseMoveLv3",
+          "rel_offset": 120,
+          "offset": 1037471,
+          "label": "[Horse] HorseMoveLv3 -15.5 -> -0.001",
+          "original": "50c3",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseMoveLv4",
+          "rel_offset": 120,
+          "offset": 1037700,
+          "label": "[Horse] HorseMoveLv4 -25.5 -> -0.001",
+          "original": "409c",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_SpecialRidingMoveLv4",
+          "rel_offset": 120,
+          "offset": 1037937,
+          "label": "[Horse] SpecialRidingMoveLv4 -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseDrift",
+          "rel_offset": 120,
+          "offset": 1038455,
+          "label": "[Horse] HorseDrift -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseStamina",
+          "rel_offset": 116,
+          "offset": 1039087,
+          "label": "[Horse] HorseStamina -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseRushAttack",
+          "rel_offset": 120,
+          "offset": 1039363,
+          "label": "[Horse] HorseRushAttack -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "SKill_HorseJump",
+          "rel_offset": 120,
+          "offset": 1039690,
+          "label": "[Horse] HorseJump -5.0 -> -0.001",
+          "original": "78ec",
+          "patched": "ffff"
+        },
+        {
+          "entry": "SKill_HorseDoubleJump",
+          "rel_offset": 120,
+          "offset": 1039933,
+          "label": "[Horse] HorseDoubleJump -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "SKill_HorsePowerJump",
+          "rel_offset": 120,
+          "offset": 1040208,
+          "label": "[Horse] HorsePowerJump -8.0 -> -0.001",
+          "original": "c0e0",
+          "patched": "ffff"
+        },
+        {
+          "entry": "SKill_HorseLateralMove",
+          "rel_offset": 120,
+          "offset": 1040475,
+          "label": "[Horse] HorseLateralMove -1.0 -> -0.001",
+          "original": "18fc",
+          "patched": "ffff"
+        },
+        {
+          "entry": "SKill_HorseSit",
+          "rel_offset": 120,
+          "offset": 1040772,
+          "label": "[Horse] HorseSit -15.5 -> -0.001",
+          "original": "50c3",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseKick",
+          "rel_offset": 116,
+          "offset": 1041008,
+          "label": "[Horse] HorseKick -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseSwimWait",
+          "rel_offset": 116,
+          "offset": 1042170,
+          "label": "[Horse] HorseSwimWait -5.0 -> -0.001",
+          "original": "78ec",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseSwimLv1",
+          "rel_offset": 116,
+          "offset": 1042419,
+          "label": "[Horse] HorseSwimLv1 -7.5 -> -0.001",
+          "original": "b4e2",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseSwimLv2",
+          "rel_offset": 116,
+          "offset": 1042667,
+          "label": "[Horse] HorseSwimLv2 -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseWaterSprint",
+          "rel_offset": 116,
+          "offset": 1042941,
+          "label": "[Horse] HorseWaterSprint -25.5 -> -0.001",
+          "original": "409c",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseInstantAcc",
+          "rel_offset": 120,
+          "offset": 1043233,
+          "label": "[Horse] HorseInstantAcc -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_HorseInstantAcc_Combo",
+          "rel_offset": 120,
+          "offset": 1043564,
+          "label": "[Horse] HorseInstantAcc_Combo -20.0 -> -0.001",
+          "original": "e0b1ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "SKill_HorseFastStart",
+          "rel_offset": 120,
+          "offset": 1043856,
+          "label": "[Horse] HorseFastStart -40.0 -> -0.001",
+          "original": "c063ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_HorsePawStamp",
+          "rel_offset": 501,
+          "offset": 1044512,
+          "label": "[Horse] HorsePawStamp -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_RidingDash",
+          "rel_offset": 120,
+          "offset": 1046745,
+          "label": "[Horse] RidingDash -40.0 -> -0.001",
+          "original": "c063ffff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_PointClimbLv0",
+          "rel_offset": 116,
+          "offset": 335510,
+          "label": "[Climbing] PointClimbLv0 -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_PointClimbLv1",
+          "rel_offset": 116,
+          "offset": 335761,
+          "label": "[Climbing] PointClimbLv1 -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_RoofClimbLv0",
+          "rel_offset": 116,
+          "offset": 336262,
+          "label": "[Climbing] RoofClimbLv0 -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_ClimbDragonStruggle",
+          "rel_offset": 116,
+          "offset": 338015,
+          "label": "[Climbing] ClimbDragonStruggle -15.0 -> -0.001",
+          "original": "68c5",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_CharacterClimb",
+          "rel_offset": 116,
+          "offset": 338287,
+          "label": "[Climbing] CharacterClimb -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Damian_CharacterClimb",
+          "rel_offset": 116,
+          "offset": 338640,
+          "label": "[Climbing] Damian_CharacterClimb -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_CharacterClimb",
+          "rel_offset": 116,
+          "offset": 338993,
+          "label": "[Climbing] Oongka_CharacterClimb -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_PointClimbHold",
+          "rel_offset": 116,
+          "offset": 340557,
+          "label": "[Climbing] PointClimbHold -15.0 -> -0.001",
+          "original": "68c5",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_DragonClimbHold",
+          "rel_offset": 116,
+          "offset": 340808,
+          "label": "[Climbing] DragonClimbHold -2.0 -> -0.001",
+          "original": "30f8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_RoofClimbHold",
+          "rel_offset": 116,
+          "offset": 341059,
+          "label": "[Climbing] RoofClimbHold -25.5 -> -0.001",
+          "original": "409c",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_ClimbSlide",
+          "rel_offset": 116,
+          "offset": 341303,
+          "label": "[Climbing] ClimbSlide -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Climb_DaggerAttack",
+          "rel_offset": 370,
+          "offset": 449611,
+          "label": "[Climbing] Climb_DaggerAttack -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Rope_AirPull",
+          "rel_offset": 116,
+          "offset": 509646,
+          "label": "[Aerial] Rope_AirPull -100.0 -> -0.001",
+          "original": "6079feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Rope_AirSwing",
+          "rel_offset": 116,
+          "offset": 510134,
+          "label": "[Aerial] Rope_AirSwing -100.0 -> -0.001",
+          "original": "6079feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_SwingLv0",
+          "rel_offset": 116,
+          "offset": 339609,
+          "label": "[Swing] SwingLv0 -5.0 -> -0.001",
+          "original": "78ec",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_SwingLv1",
+          "rel_offset": 116,
+          "offset": 339845,
+          "label": "[Swing] SwingLv1 -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_SwingLv2",
+          "rel_offset": 116,
+          "offset": 340081,
+          "label": "[Swing] SwingLv2 -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_BlackWolf_Swing",
+          "rel_offset": 120,
+          "offset": 505542,
+          "label": "[Swing] Skill_BlackWolf_Swing -125.0 -> -0.001",
+          "original": "b817feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Swimming",
+          "rel_offset": 116,
+          "offset": 496057,
+          "label": "[Swimming] Swimming -5.0 -> -0.001",
+          "original": "78ec",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Swimming_Dash",
+          "rel_offset": 116,
+          "offset": 496309,
+          "label": "[Swimming] Swimming_Dash -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Wait",
+          "rel_offset": 116,
+          "offset": 328214,
+          "label": "[Dodge] Wait -31.1 -> -0.001",
+          "original": "a086",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_WeaponMoveLv3",
+          "rel_offset": 116,
+          "offset": 327434,
+          "label": "[Dodge] WeaponMoveLv3 -25.5 -> -0.001",
+          "original": "409c",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_BasicMoveLv3",
+          "rel_offset": 116,
+          "offset": 330169,
+          "label": "[Dodge] BasicMoveLv3 -25.5 -> -0.001",
+          "original": "409c",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Roll",
+          "rel_offset": 116,
+          "offset": 328658,
+          "label": "[Dodge] Roll -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_MoveLv4Jump",
+          "rel_offset": 116,
+          "offset": 332159,
+          "label": "[Dodge] MoveLv4Jump -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_FastAvoid",
+          "rel_offset": 116,
+          "offset": 416390,
+          "label": "[Dodge] FastAvoid -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Damian_FastAvoid",
+          "rel_offset": 116,
+          "offset": 416731,
+          "label": "[Dodge] Damian_FastAvoid -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_FastAvoid",
+          "rel_offset": 116,
+          "offset": 417072,
+          "label": "[Dodge] Oongka_FastAvoid -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_GuardWait",
+          "rel_offset": 116,
+          "offset": 331675,
+          "label": "[Guard] GuardWait -25.5 -> -0.001",
+          "original": "409c",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_GuardStride",
+          "rel_offset": 116,
+          "offset": 331908,
+          "label": "[Guard] GuardStride -25.5 -> -0.001",
+          "original": "409c",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_ShieldDash",
+          "rel_offset": 461,
+          "offset": 357013,
+          "label": "[Guard] ShieldDash -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Damian_ShieldDash",
+          "rel_offset": 116,
+          "offset": 357357,
+          "label": "[Guard] Damian_ShieldDash -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_ShieldParryingDash",
+          "rel_offset": 461,
+          "offset": 358385,
+          "label": "[Guard] ShieldParryingDash -70.0 -> -0.001",
+          "original": "90eefeff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_BattleAxeDash_30",
+          "rel_offset": 116,
+          "offset": 339341,
+          "label": "[Attack] BattleAxeDash_30 -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_ContinuousAttack_10",
+          "rel_offset": 116,
+          "offset": 332426,
+          "label": "[Attack] ContinuousAttack_10 -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_ContinuousAttack_20",
+          "rel_offset": 116,
+          "offset": 332719,
+          "label": "[Attack] ContinuousAttack_20 -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_ContinuousAttack_30",
+          "rel_offset": 116,
+          "offset": 333012,
+          "label": "[Attack] ContinuousAttack_30 -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_TurnBash_I",
+          "rel_offset": 461,
+          "offset": 351881,
+          "label": "[Attack] TurnBash_I -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_TurnBash_II",
+          "rel_offset": 116,
+          "offset": 352205,
+          "label": "[Attack] TurnBash_II -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_TurnBash_I",
+          "rel_offset": 116,
+          "offset": 352943,
+          "label": "[Attack] Oongka_TurnBash_I -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_TurnBash_II",
+          "rel_offset": 116,
+          "offset": 353293,
+          "label": "[Attack] Oongka_TurnBash_II -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Damian_TurnBash_I",
+          "rel_offset": 116,
+          "offset": 353978,
+          "label": "[Attack] Damian_TurnBash_I -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Damian_TurnBash_II",
+          "rel_offset": 116,
+          "offset": 354299,
+          "label": "[Attack] Damian_TurnBash_II -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_MoveCutting_I",
+          "rel_offset": 480,
+          "offset": 368508,
+          "label": "[Attack] MoveCutting_I -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_MoveCutting_II",
+          "rel_offset": 480,
+          "offset": 369263,
+          "label": "[Attack] MoveCutting_II -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_MoveCutting_III",
+          "rel_offset": 480,
+          "offset": 370000,
+          "label": "[Attack] MoveCutting_III -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_MoveCutting_Hold",
+          "rel_offset": 116,
+          "offset": 370772,
+          "label": "[Attack] MoveCutting_Hold -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_GroundSmash_I",
+          "rel_offset": 116,
+          "offset": 371119,
+          "label": "[Attack] Oongka_GroundSmash_I -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_GroundSmash_II",
+          "rel_offset": 116,
+          "offset": 371474,
+          "label": "[Attack] Oongka_GroundSmash_II -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_GroundSmash_III",
+          "rel_offset": 116,
+          "offset": 371832,
+          "label": "[Attack] Oongka_GroundSmash_III -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Lunge_Catch",
+          "rel_offset": 116,
+          "offset": 379401,
+          "label": "[Attack] Lunge_Catch -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_LungeAir_Combo_II",
+          "rel_offset": 116,
+          "offset": 378070,
+          "label": "[Attack] Skill_LungeAir_Combo_II -80.0 -> -0.001",
+          "original": "80c7feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Counter",
+          "rel_offset": 116,
+          "offset": 380013,
+          "label": "[Attack] Counter -80.0 -> -0.001",
+          "original": "80c7feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_DeepThrust",
+          "rel_offset": 502,
+          "offset": 443213,
+          "label": "[Attack] DeepThrust -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_QuickDraw",
+          "rel_offset": 507,
+          "offset": 445176,
+          "label": "[Attack] Skill_QuickDraw -120.0 -> -0.001",
+          "original": "402bfeff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Lift_Smash",
+          "rel_offset": 116,
+          "offset": 523513,
+          "label": "[Attack] Skill_Lift_Smash -100.0 -> -0.001",
+          "original": "6079feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Wrestle_Hostage",
+          "rel_offset": 116,
+          "offset": 363106,
+          "label": "[Wrestle] Wrestle_Hostage -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Damian_Wrestle_Hostage",
+          "rel_offset": 116,
+          "offset": 363433,
+          "label": "[Wrestle] Damian_Wrestle_Hostage -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_Wrestle_Hostage",
+          "rel_offset": 116,
+          "offset": 363760,
+          "label": "[Wrestle] Oongka_Wrestle_Hostage -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_CatchHostage",
+          "rel_offset": 116,
+          "offset": 404364,
+          "label": "[Wrestle] CatchHostage -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Grab_Ing",
+          "rel_offset": 116,
+          "offset": 456199,
+          "label": "[Wrestle] Grab_Ing -200.0 -> -0.001",
+          "original": "c0f2fcff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Wrestle_GiantSwing",
+          "rel_offset": 461,
+          "offset": 459610,
+          "label": "[Wrestle] Wrestle_GiantSwing -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_Wrestle_GiantSwing",
+          "rel_offset": 116,
+          "offset": 460299,
+          "label": "[Wrestle] Oongka_Wrestle_GiantSwing -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_UnArmedCombination_I",
+          "rel_offset": 116,
+          "offset": 398558,
+          "label": "[Unarmed] UnArmedCombination_I -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_UnArmedMastery_TurnAttack",
+          "rel_offset": 116,
+          "offset": 400414,
+          "label": "[Unarmed] UnArmedMastery_TurnAttack -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Mount_Ing",
+          "rel_offset": 116,
+          "offset": 334491,
+          "label": "[Mount] Mount_Ing -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Mount_Attack_Lv1",
+          "rel_offset": 116,
+          "offset": 334757,
+          "label": "[Mount] Mount_Attack_Lv1 -15.0 -> -0.001",
+          "original": "68c5",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Mount_Attack_Lv2",
+          "rel_offset": 116,
+          "offset": 335009,
+          "label": "[Mount] Mount_Attack_Lv2 -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_RidingNorAttack",
+          "rel_offset": 116,
+          "offset": 1046210,
+          "label": "[Mount] RidingNorAttack -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_AuxWeapon_01",
+          "rel_offset": 116,
+          "offset": 470094,
+          "label": "[Aux] AuxWeapon_01 -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_UseResourceSP_20",
+          "rel_offset": 116,
+          "offset": 470359,
+          "label": "[Aux] UseResourceSP_20 -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_AuxWeapon_03",
+          "rel_offset": 116,
+          "offset": 470599,
+          "label": "[Aux] AuxWeapon_03 -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_AuxWeapon_06",
+          "rel_offset": 116,
+          "offset": 471643,
+          "label": "[Aux] AuxWeapon_06 -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_AuxWeapon_07",
+          "rel_offset": 116,
+          "offset": 471904,
+          "label": "[Aux] AuxWeapon_07 -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_AuxWeapon_08",
+          "rel_offset": 116,
+          "offset": 471382,
+          "label": "[Aux] AuxWeapon_08 -80.0 -> -0.001",
+          "original": "80c7feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_Bow_RollShot",
+          "rel_offset": 120,
+          "offset": 479862,
+          "label": "[Bow] Bow_RollShot -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Damian_Bow_RollShot",
+          "rel_offset": 120,
+          "offset": 480284,
+          "label": "[Bow] Damian_Bow_RollShot -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Oongka_Bow_RollShot",
+          "rel_offset": 120,
+          "offset": 480706,
+          "label": "[Bow] Oongka_Bow_RollShot -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Demian_RapierHardAttack",
+          "rel_offset": 478,
+          "offset": 529420,
+          "label": "[Special] Demian_RapierHardAttack -20.0 -> -0.001",
+          "original": "e0b1",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_NoLimit_Cutting_I",
+          "rel_offset": 508,
+          "offset": 552439,
+          "label": "[Special] NoLimit_Cutting_I -10.0 -> -0.001",
+          "original": "f0d8",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_BossWeapon_HamondBindel",
+          "rel_offset": 636,
+          "offset": 540965,
+          "label": "[Special] BossWeapon_HamondBindel -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_BossWeapon_Common",
+          "rel_offset": 498,
+          "offset": 541898,
+          "label": "[Special] BossWeapon_Common -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_BossWeapon_FlameKnight",
+          "rel_offset": 507,
+          "offset": 543064,
+          "label": "[Special] BossWeapon_FlameKnight -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_BossWeapon_SplitHorn",
+          "rel_offset": 504,
+          "offset": 544380,
+          "label": "[Special] BossWeapon_SplitHorn -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_Demian_RapierParry",
+          "rel_offset": 116,
+          "offset": 534008,
+          "label": "[Special] Skill_Demian_RapierParry -100.0 -> -0.001",
+          "original": "6079feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_WarMachine_Dash",
+          "rel_offset": 116,
+          "offset": 1046988,
+          "label": "[Vehicle] WarMachine_Dash -150.0 -> -0.001",
+          "original": "10b6fdff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_WarMachine_Gatling",
+          "rel_offset": 116,
+          "offset": 1047271,
+          "label": "[Vehicle] WarMachine_Gatling -5.0 -> -0.001",
+          "original": "78ec",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_WarMachine_MultiShot",
+          "rel_offset": 116,
+          "offset": 1047838,
+          "label": "[Vehicle] WarMachine_MultiShot -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_WarMachine_EMP",
+          "rel_offset": 116,
+          "offset": 1048119,
+          "label": "[Vehicle] Skill_WarMachine_EMP -100.0 -> -0.001",
+          "original": "6079feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_WarMachine_OverHeating",
+          "rel_offset": 116,
+          "offset": 1048412,
+          "label": "[Vehicle] WarMachine_OverHeating -80.0 -> -0.001",
+          "original": "80c7feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_WarMachine_FlameThrower",
+          "rel_offset": 116,
+          "offset": 1048699,
+          "label": "[Vehicle] WarMachine_FlameThrower -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_WarMachine_Tongs",
+          "rel_offset": 116,
+          "offset": 1049270,
+          "label": "[Vehicle] WarMachine_Tongs -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_WarMachine_welding",
+          "rel_offset": 116,
+          "offset": 1049552,
+          "label": "[Vehicle] WarMachine_welding -25.0 -> -0.001",
+          "original": "589e",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_TriStar_Evade",
+          "rel_offset": 116,
+          "offset": 1050097,
+          "label": "[Vehicle] TriStar_Evade -30.0 -> -0.001",
+          "original": "d08a",
+          "patched": "ffff"
+        },
+        {
+          "entry": "Skill_TriStar_Breath",
+          "rel_offset": 116,
+          "offset": 1050347,
+          "label": "[Vehicle] TriStar_Breath -75.0 -> -0.001",
+          "original": "08dbfeff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_TriStar_Attack_Fire",
+          "rel_offset": 120,
+          "offset": 1050889,
+          "label": "[Vehicle] Skill_TriStar_Attack_Fire -100.0 -> -0.001",
+          "original": "6079feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_TriStar_Attack_Ice",
+          "rel_offset": 120,
+          "offset": 1051496,
+          "label": "[Vehicle] Skill_TriStar_Attack_Ice -100.0 -> -0.001",
+          "original": "6079feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_TriStar_Attack_Lightning",
+          "rel_offset": 120,
+          "offset": 1052108,
+          "label": "[Vehicle] Skill_TriStar_Attack_Lightning -100.0 -> -0.001",
+          "original": "6079feff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_TriStar_MultiAttack",
+          "rel_offset": 116,
+          "offset": 1052720,
+          "label": "[Vehicle] Skill_TriStar_MultiAttack -240.0 -> -0.001",
+          "original": "8056fcff",
+          "patched": "ffffffff"
+        },
+        {
+          "entry": "Skill_HorseMoveLv5",
+          "rel_offset": 120,
+          "offset": 1038185,
+          "label": "[Horse] HorseMoveLv5_sprintRegen 18.0 -> 10000.000",
+          "original": "50460000",
+          "patched": "80969800"
+        },
+        {
+          "entry": "Skill_HorseMoveLv5_100",
+          "rel_offset": 120,
+          "offset": 1038794,
+          "label": "[Horse] HorseMoveLv5_100_sprintRegen 9.0 -> 10000.000",
+          "original": "28230000",
+          "patched": "80969800"
+        }
+      ]
+    }
+  ]
+}

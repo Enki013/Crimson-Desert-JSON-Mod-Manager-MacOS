@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.exe
+*.spec
+build/
+dist/
+.venv/
+venv/
+.env
+.DS_Store
+
+backups/*.papgt
+mods/enabled/*.json
+mods/enabled/*.modpatch
+_game_path.json
