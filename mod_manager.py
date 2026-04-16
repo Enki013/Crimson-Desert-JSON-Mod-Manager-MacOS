@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Crimson Desert — Mod Manager (macOS)
 =====================================
@@ -6,21 +7,16 @@ Merges ALL enabled modpatch JSON files into a single overlay (0036/).
 CLI (subcommands):
     python3 mod_manager.py wizard
     python3 mod_manager.py set-game "/Applications/Crimson Desert.app"
-    python3 mod_manager.py install ./mods/foo --apply   # copy + patch game in one go
-    python3 mod_manager.py install ~/Downloads/SomeModFolder
+    python3 mod_manager.py install ./mods/foo --apply   # copy one selected variant + patch game
+    python3 mod_manager.py install ~/Downloads/SomeModFolder   # choose one variant if needed
     python3 mod_manager.py status             # enabled mods, game path, health checks
     python3 mod_manager.py scan ~/Downloads/SomeModFolder [--game PATH]
     python3 mod_manager.py list
     python3 mod_manager.py apply [--game PATH]   # needs mods in mods/enabled/
-    python3 mod_manager.py restore [--game PATH]   # vanilla overlay only (does not touch mods/enabled/)
-    python3 mod_manager.py disable <name-or-index>  # only mods/enabled/ (re-apply yourself)
-    python3 mod_manager.py remove <name-or-index>     # disable + apply in one step
-    python3 mod_manager.py reset [-y]               # vanilla + clear mods/enabled/
-
-Legacy flags (--list / --apply / --restore or --uninstall; unknown --flags exit with an error):
-    python3 mod_manager.py --list
-    python3 mod_manager.py [--game PATH] --apply | --restore
-    (--uninstall is a legacy alias for --restore.)
+    python3 mod_manager.py restore [--game PATH]   # vanilla overlay only (keeps active/disabled/archive mods)
+    python3 mod_manager.py disable <name-or-index> [--game PATH]  # disable + sync game now
+    python3 mod_manager.py remove <name-or-index> [--game PATH]   # legacy alias for disable
+    python3 mod_manager.py reset [-y] [--game PATH]   # vanilla + clear only mods/enabled/
 
 Mod JSON format:
 {
@@ -329,6 +325,50 @@ def _interactive_pick_mod_path(paths: List[Path]) -> Optional[Path]:
     return None
 
 
+def _select_install_variant(paths: List[Path], *, pick: bool, max_files: Optional[int]) -> Optional[Path]:
+    """Resolve the single variant to install from a folder."""
+    if not paths:
+        warn("No .json or .modpatch files found.")
+        return None
+    if pick and max_files is not None:
+        error("Use either --pick or --max-files, not both.")
+        return None
+    if max_files is not None and max_files < 1:
+        error("--max-files must be >= 1")
+        return None
+    if len(paths) == 1:
+        return paths[0]
+
+    if pick:
+        if not sys.stdin.isatty():
+            error("install --pick needs an interactive terminal. For scripts use --max-files 1.")
+            return None
+        return _interactive_pick_mod_path(paths)
+
+    if max_files is not None:
+        if max_files != 1:
+            error(
+                "Folder contains multiple mod variants. To avoid conflicts, install exactly one file "
+                "with --pick or --max-files 1."
+            )
+            return None
+        warn(
+            f"{len(paths)} mod file(s) in folder — installing only the first file "
+            f"(sorted by name) because --max-files 1 was requested."
+        )
+        return paths[0]
+
+    if sys.stdin.isatty():
+        warn("Folder contains multiple mod variants. Select exactly one to avoid conflicting patches.")
+        return _interactive_pick_mod_path(paths)
+
+    error(
+        "Folder contains multiple mod variants. Refusing to install all of them because they may "
+        "conflict in-game. Use --max-files 1 in scripts, or run in a terminal to choose one."
+    )
+    return None
+
+
 def cmd_install_from_folder(
     folder: str,
     recursive: bool = True,
@@ -339,68 +379,39 @@ def cmd_install_from_folder(
     max_files: Optional[int] = None,
     pick: bool = False,
 ) -> bool:
-    """Copy mod JSON into mods/available/ and mods/enabled/. Optionally run apply."""
+    """Copy one selected mod JSON into mods/available/ and mods/enabled/. Optionally run apply."""
     root = _clean_user_path(folder)
     if not root.is_dir():
         error(f"Folder not found: {root}")
-        return False
-    if pick and max_files is not None:
-        error("Use either --pick or --max-files, not both.")
-        return False
-    if max_files is not None and max_files < 1:
-        error("--max-files must be >= 1")
         return False
     paths = sorted(
         _iter_mod_paths_in_folder(root, recursive),
         key=lambda p: p.name.lower(),
     )
-    if not paths:
-        warn("No .json or .modpatch files found.")
+    chosen = _select_install_variant(paths, pick=pick, max_files=max_files)
+    if chosen is None:
         return False
-    if pick:
-        if len(paths) > 1 and not sys.stdin.isatty():
-            error("install --pick needs an interactive terminal. For scripts use --max-files N.")
-            return False
-        chosen = _interactive_pick_mod_path(paths)
-        if chosen is None:
-            return False
-        paths = [chosen]
-    if max_files is not None and len(paths) > max_files:
-        warn(
-            f"{len(paths)} mod file(s) in folder — installing only the first {max_files} "
-            f"(sorted by name; use --max-files to change)."
-        )
-        paths = paths[:max_files]
     os.makedirs(MODS_DIR, exist_ok=True)
     os.makedirs(MODS_AVAILABLE_DIR, exist_ok=True)
-    n = 0
-    for src in paths:
-        dest = Path(MODS_DIR) / src.name
-        avail_dest = Path(MODS_AVAILABLE_DIR) / src.name
-        existed = dest.exists()
-        if existed and not force:
-            warn(f"Already exists (skipped): {dest.name}  (use install --force to overwrite)")
-            continue
-        # Always keep a copy in available/ as archive
-        shutil.copy2(src, avail_dest)
-        # Copy to enabled/ (active)
-        shutil.copy2(src, dest)
-        if existed:
-            success(f"Overwrote → mods/enabled/{dest.name}")
-        else:
-            success(f"Installed → mods/enabled/{dest.name}")
-        n += 1
-    if n == 0:
+    dest = Path(MODS_DIR) / chosen.name
+    avail_dest = Path(MODS_AVAILABLE_DIR) / chosen.name
+    existed = dest.exists()
+    if existed and not force:
+        warn(f"Already exists (skipped): {dest.name}  (use install --force to overwrite)")
         warn("No files copied.")
         if apply_after:
             warn("Skipping apply (nothing was installed).")
         return False
+    # Always keep a copy in available/ as archive
+    shutil.copy2(chosen, avail_dest)
+    # Copy to enabled/ (active)
+    shutil.copy2(chosen, dest)
+    if existed:
+        success(f"Overwrote → mods/enabled/{dest.name}")
+    else:
+        success(f"Installed → mods/enabled/{dest.name}")
 
-    info(f"Copied {n} mod file(s) (also archived in mods/available/).")
-    if n > 1:
-        warn(
-            "Multiple mod files installed — if they patch the same game_file, keep only one in mods/enabled/ at a time."
-        )
+    info(f"Copied 1 mod file (also archived in mods/available/).")
     if not apply_after:
         warn("Game not patched yet — run:  python3 mod_manager.py apply  (or use  install --apply )")
 
@@ -416,8 +427,8 @@ def cmd_install_from_folder(
     return True
 
 
-def _clear_enabled_mod_files():
-    """Delete all .json / .modpatch in mods/enabled/."""
+def _clear_active_mods():
+    """Delete all active .json / .modpatch files from mods/enabled/."""
     n = 0
     for f in _enabled_mod_files_ordered():
         f.unlink()
@@ -425,11 +436,8 @@ def _clear_enabled_mod_files():
     return n
 
 
-def cmd_disable_enabled_mod(identifier: str, *, hint_apply: bool = True) -> bool:
-    files = _enabled_mod_files_ordered()
-    if not files:
-        warn("mods/enabled/ is empty.")
-        return False
+def _resolve_mod_identifier(identifier: str, files: List[Path]) -> Optional[Path]:
+    """Resolve list index or file name/stem to a mod path."""
     target: Optional[Path] = None
     try:
         idx = int(identifier)
@@ -443,9 +451,19 @@ def cmd_disable_enabled_mod(identifier: str, *, hint_apply: bool = True) -> bool
             if p.stem.lower() == id_lower or p.name.lower() == id_lower:
                 target = p
                 break
+    return target
+
+
+def _move_enabled_mod_to_disabled(identifier: str) -> Optional[Path]:
+    """Move one enabled mod to mods/disabled/ and return the destination path."""
+    files = _enabled_mod_files_ordered()
+    if not files:
+        warn("mods/enabled/ is empty.")
+        return None
+    target = _resolve_mod_identifier(identifier, files)
     if target is None:
         error(f"No enabled mod matches {identifier!r}. Use `list` to see indices.")
-        return False
+        return None
     # Move to disabled instead of deleting
     os.makedirs(MODS_DISABLED_DIR, exist_ok=True)
     dest = Path(MODS_DISABLED_DIR) / target.name
@@ -454,21 +472,15 @@ def cmd_disable_enabled_mod(identifier: str, *, hint_apply: bool = True) -> bool
         dest.unlink()
     shutil.move(str(target), str(dest))
     success(f"Disabled: {target.name}  (enabled → disabled)")
-    if hint_apply:
-        info(
-            "Update the game:  apply  if mods remain in mods/enabled/;  restore  if it is now empty. "
-            "Or use  remove  for one-step updates. Re-enable with:  enable  "
-        )
-    return True
+    return dest
 
 
-def cmd_remove_mod(identifier: str, game_opt: Optional[str] = None) -> bool:
-    """Remove one mod from enabled and sync the game (apply or restore if none left)."""
-    if not cmd_disable_enabled_mod(identifier, hint_apply=False):
-        return False
+def _sync_game_after_enabled_change(game_opt: Optional[str] = None) -> bool:
+    """Rebuild overlay if active mods remain; otherwise restore vanilla."""
     if not init_game_dir(game_opt):
-        warn("Game path not set — mod file removed; run  set-game  then  apply  or  restore  when ready.")
-        return True
+        warn("Game path not set — mod state changed, but the game was not synced yet.")
+        info("Run `set-game` first, then `apply` if mods remain enabled or `restore` if none remain.")
+        return False
     print()
     info(f"Game packages: {GAME_DIR}")
     print()
@@ -479,31 +491,50 @@ def cmd_remove_mod(identifier: str, game_opt: Optional[str] = None) -> bool:
     return True
 
 
+def cmd_disable_enabled_mod(identifier: str, game_opt: Optional[str] = None) -> bool:
+    moved = _move_enabled_mod_to_disabled(identifier)
+    if moved is None:
+        return False
+    _sync_game_after_enabled_change(game_opt)
+    info(f"Re-enable with:  enable {moved.stem}")
+    return True
+
+
+def cmd_remove_mod(identifier: str, game_opt: Optional[str] = None) -> bool:
+    """Legacy alias for disable: move one mod to disabled and sync the game."""
+    info("`remove` is a legacy alias for `disable`.")
+    return cmd_disable_enabled_mod(identifier, game_opt)
+
+
 def cmd_reset(game_opt: Optional[str] = None, assume_yes: bool = False) -> bool:
-    """Restore vanilla game and clear mods/enabled/."""
+    """Restore vanilla game and clear only the active mods in mods/enabled/."""
     if assume_yes:
         pass
     elif sys.stdin.isatty():
-        ans = input("Reset game to vanilla and delete all mods in mods/enabled/? [y/N] ").strip().lower()
+        ans = input(
+            "Reset game to vanilla and clear active mods from mods/enabled/? "
+            "(mods/disabled and mods/available are kept) [y/N] "
+        ).strip().lower()
         if ans not in ("y", "yes"):
             info("Cancelled.")
             return False
     else:
         error(
             "stdin is not a terminal — refusing reset without explicit confirmation. "
-            "Use:  reset -y   (vanilla game + clear mods/enabled/)"
+            "Use:  reset -y   (vanilla game + clear active mods from mods/enabled/)"
         )
         return False
     if not init_game_dir(game_opt):
         game_dir_help()
         return False
     cmd_uninstall()
-    n = _clear_enabled_mod_files()
+    n = _clear_active_mods()
     if n:
-        success(f"Cleared {n} file(s) from mods/enabled/")
+        success(f"Cleared {n} active mod file(s) from mods/enabled/")
     else:
         info("mods/enabled/ was already empty.")
-    print("\nDone — full reset. Restart the game.")
+    info("Preserved mod library in mods/available/ and parked mods in mods/disabled/.")
+    print("\nDone — active mods reset to vanilla. Restart the game.")
     return True
 
 
@@ -644,7 +675,7 @@ def _wizard_resolve_game() -> bool:
 
 
 def run_wizard():
-    """Interactive menu — full mod lifecycle matching GUI v7 flow."""
+    """Interactive menu — simplified mod install/disable/apply flow."""
     print()
     print(f"{Style.BOLD}Crimson Desert — JSON Mod Manager{Style.RESET}")
     print(f"{Style.DIM}JSON modpatch → overlay 0036{Style.RESET}")
@@ -671,20 +702,13 @@ def run_wizard():
     while True:
         print(f"{Style.BOLD}Choose an action:{Style.RESET}")
         print(f"  {Style.CYAN} 1){Style.RESET} 📦 Install mod(s) from folder")
-        print(f"  {Style.CYAN} 2){Style.RESET} 📋 List available mods")
-        print(f"  {Style.CYAN} 3){Style.RESET} ▶  Activate mod (available → enabled)")
-        print(f"  {Style.CYAN} 4){Style.RESET} 📋 List enabled mods")
-        print(f"  {Style.CYAN} 5){Style.RESET} ⏸  Disable mod (enabled → disabled)")
-        print(f"  {Style.CYAN} 6){Style.RESET} 📋 List disabled mods")
-        print(f"  {Style.CYAN} 7){Style.RESET} 🔄 Re-enable mod (disabled → enabled)")
-        print(f"  {Style.CYAN} 8){Style.RESET} 🔧 Show patches for a mod")
-        print(f"  {Style.CYAN} 9){Style.RESET} 🎚  Toggle patches (ON/OFF)")
-        print(f"  {Style.CYAN}10){Style.RESET} ✅ Apply mods to game")
-        print(f"  {Style.CYAN}11){Style.RESET} ↩  Restore game (vanilla)")
-        print(f"  {Style.CYAN}12){Style.RESET} 🗑  Remove mod permanently")
-        print(f"  {Style.CYAN}13){Style.RESET} ⚙  Change game path")
-        print(f"  {Style.CYAN}14){Style.RESET} 📊 Status")
-        print(f"  {Style.CYAN}15){Style.RESET} 🎮 Start game")
+        print(f"  {Style.CYAN} 2){Style.RESET} 📋 List enabled mods")
+        print(f"  {Style.CYAN} 3){Style.RESET} ⏸  Disable mod and sync game")
+        print(f"  {Style.CYAN} 4){Style.RESET} ✅ Apply mods to game")
+        print(f"  {Style.CYAN} 5){Style.RESET} ↩  Restore game only (vanilla overlay)")
+        print(f"  {Style.CYAN} 6){Style.RESET} ↺  Reset active mods to vanilla")
+        print(f"  {Style.CYAN} 7){Style.RESET} 📊 Status")
+        print(f"  {Style.CYAN} 8){Style.RESET} 🎮 Start game")
         print(f"  {Style.CYAN} 0){Style.RESET} Exit")
         choice = input("> ").strip()
         print()
@@ -700,20 +724,13 @@ def run_wizard():
                 _wizard_summary()
                 print()
             elif choice == "2":
-                cmd_available()
-                print()
-            elif choice == "3":
-                cmd_available()
-                ident = input("Index or file name to activate: ").strip()
-                if ident:
-                    cmd_activate_available(ident)
-                print()
-                _wizard_summary()
-                print()
-            elif choice == "4":
                 cmd_list()
                 print()
-            elif choice == "5":
+            elif choice == "3":
+                if not GAME_DIR and not _wizard_resolve_game():
+                    warn("Set game path first.")
+                    print()
+                    continue
                 cmd_list()
                 ident = input("Index or file name to disable: ").strip()
                 if ident:
@@ -721,74 +738,35 @@ def run_wizard():
                 print()
                 _wizard_summary()
                 print()
-            elif choice == "6":
-                cmd_disabled_list()
-                print()
-            elif choice == "7":
-                cmd_disabled_list()
-                ident = input("Index or file name to re-enable: ").strip()
-                if ident:
-                    cmd_enable_mod(ident)
-                print()
-                _wizard_summary()
-                print()
-            elif choice == "8":
-                cmd_list()
-                ident = input("Mod index or name to show patches: ").strip()
-                if ident:
-                    cmd_patches(ident)
-                print()
-            elif choice == "9":
-                cmd_list()
-                ident = input("Mod index or name: ").strip()
-                if not ident:
-                    continue
-                cmd_patches(ident)
-                print("Toggle spec: index (e.g. 5), range (5-10), category ([Flight]),")
-                print("             all, none, on 5, off [Sprint], etc.")
-                spec = input("Toggle spec: ").strip()
-                if spec:
-                    cmd_toggle_patch(ident, spec)
-                print()
-            elif choice == "10":
+            elif choice == "4":
                 if not GAME_DIR and not _wizard_resolve_game():
-                    warn("Set game path first (option 13).")
+                    warn("Set game path first.")
                     print()
                     continue
                 cmd_apply()
                 print()
-            elif choice == "11":
+            elif choice == "5":
                 if not GAME_DIR and not _wizard_resolve_game():
-                    warn("Set game path first (option 13).")
+                    warn("Set game path first.")
                     print()
                     continue
                 cmd_uninstall()
                 print()
-            elif choice == "12":
-                cmd_list()
-                cmd_disabled_list()
-                cmd_available()
-                ident = input("Mod name to permanently delete: ").strip()
-                if ident:
-                    confirm = input(f"Permanently delete '{ident}'? [y/N]: ").strip().lower()
-                    if confirm in ("y", "yes"):
-                        cmd_purge_mod(ident)
-                    else:
-                        info("Cancelled.")
+            elif choice == "6":
+                if not GAME_DIR and not _wizard_resolve_game():
+                    warn("Set game path first.")
+                    print()
+                    continue
+                cmd_reset()
                 print()
                 _wizard_summary()
                 print()
-            elif choice == "13":
-                raw = input("Path to Crimson Desert.app or packages folder: ").strip()
-                if raw:
-                    cmd_set_game_cli(raw)
-                print()
-            elif choice == "14":
+            elif choice == "7":
                 cmd_status()
                 print()
-            elif choice == "15":
+            elif choice == "8":
                 if not GAME_DIR and not _wizard_resolve_game():
-                    warn("Set game path first (option 13).")
+                    warn("Set game path first.")
                     print()
                     continue
                 cmd_start_game()
@@ -797,7 +775,7 @@ def run_wizard():
                 info("Goodbye.")
                 return
             else:
-                warn("Invalid choice. Pick 0–15.")
+                warn("Invalid choice. Pick 0–8.")
                 print()
         except KeyboardInterrupt:
             print()
@@ -1575,7 +1553,7 @@ def cmd_list():
 
 
 def cmd_uninstall():
-    """Restore original game files."""
+    """Restore original game files without changing mod library folders."""
     if not GAME_DIR:
         game_dir_help()
         return
@@ -1593,7 +1571,7 @@ def cmd_uninstall():
         shutil.rmtree(mod_dir)
         print(f"  Removed: {MOD_DIR_NAME}/")
 
-    print("\nDone — original game restored. Restart the game.")
+    print("\nDone — original game restored. Active and archived mod files were left untouched. Restart the game.")
 
 
 def cmd_apply():
@@ -1776,73 +1754,6 @@ def cmd_apply():
 
 # ─── CLI ────────────────────────────────────────────────────────────────
 
-def _parse_legacy_argv(argv):
-    """Strip --game <path> / --game=path; return (remaining, game_override or None)."""
-    game_override: Optional[str] = None
-    out = []
-    i = 0
-    while i < len(argv):
-        a = argv[i]
-        if a == "--game" and i + 1 < len(argv):
-            game_override = argv[i + 1]
-            i += 2
-            continue
-        if a.startswith("--game="):
-            game_override = a.split("=", 1)[1]
-            i += 1
-            continue
-        out.append(a)
-        i += 1
-    return out, game_override
-
-
-def main_legacy(argv):
-    """Backward compatibility: --list / --apply / --restore / --uninstall / --game."""
-    args, game_override = _parse_legacy_argv(argv)
-    if "--help" in args or "-h" in args:
-        print(__doc__)
-        print("Legacy: --list  --apply  --restore | --uninstall  --game PATH")
-        print("Commands:  wizard | set-game | install [--apply] | scan | list | status | apply | restore | disable | remove | reset")
-        return
-    if "--list" in args:
-        cmd_list()
-        return
-    if len(args) == 0:
-        if game_override:
-            if init_game_dir(game_override):
-                success("Game path saved.")
-            else:
-                sys.exit(1)
-        else:
-            info("No action given. Try: wizard  |  install … --apply  |  --list")
-        return
-
-    legacy_restore = {"--restore", "--uninstall"}
-    legacy_actions = {"--apply", *legacy_restore}
-    unknown = [a for a in args if a not in legacy_actions]
-    if unknown:
-        error(f"Unknown legacy flag(s): {unknown}")
-        info("Allowed with leading -- :  --list  --apply  --restore  --uninstall  (and optional --game PATH)")
-        info("Subcommands do not use a leading -- :  e.g.  apply   restore   wizard")
-        sys.exit(2)
-
-    if "--apply" in args and legacy_restore.intersection(args):
-        error("Use only one of: --apply   --restore | --uninstall")
-        sys.exit(2)
-
-    if "--uninstall" in args and "--restore" in args:
-        error("Use only one of: --restore   --uninstall  (same action)")
-        sys.exit(2)
-
-    if not init_game_dir(game_override):
-        game_dir_help()
-        sys.exit(1)
-    if legacy_restore.intersection(args):
-        cmd_uninstall()
-    else:
-        cmd_apply()
-
-
 def _build_arg_parser():
     parser = argparse.ArgumentParser(
         prog="mod_manager.py",
@@ -1852,7 +1763,7 @@ def _build_arg_parser():
 examples:
   %(prog)s wizard
   %(prog)s set-game "/Applications/Crimson Desert.app"
-  %(prog)s install ./mods/stamina_json_v1.02.00 --apply
+  %(prog)s install ./mods/stamina_json_v1.02.00 --pick --apply
   %(prog)s install ~/Mods --apply --force
   %(prog)s scan ./SomeModFolder
   %(prog)s status
@@ -1860,16 +1771,10 @@ examples:
   %(prog)s apply
   %(prog)s restore
   %(prog)s install ./mods/stamina_pack --pick --apply
-  %(prog)s disable 2
+  %(prog)s disable 2 --game "/Applications/Crimson Desert.app"
   %(prog)s remove 2
   %(prog)s reset
   %(prog)s reset -y
-
-legacy (still supported):
-  %(prog)s --list
-  %(prog)s --apply
-  %(prog)s --restore
-  %(prog)s --uninstall
         """,
     )
     sub = parser.add_subparsers(dest="command", metavar="COMMAND")
@@ -1881,7 +1786,7 @@ legacy (still supported):
 
     p_in = sub.add_parser(
         "install",
-        help="Copy mod JSON into mods/enabled/ (use --apply to patch the game in one step)",
+        help="Copy one selected mod JSON into mods/enabled/ (use --apply to patch the game in one step)",
     )
     p_in.add_argument("mod_folder", help="Folder to scan")
     p_in.add_argument(
@@ -1913,7 +1818,7 @@ legacy (still supported):
         type=int,
         default=None,
         metavar="N",
-        help="Non-interactive: copy at most N mod files (sorted by name). For scripts/CI when a folder has variants.",
+        help="Non-interactive: install exactly one file with --max-files 1 when a folder has variants.",
     )
 
     p_scan = sub.add_parser(
@@ -1934,33 +1839,34 @@ legacy (still supported):
 
     p_rs = sub.add_parser(
         "restore",
-        help="Remove 0036 overlay and restore meta/0.papgt (does not change mods/enabled/ — use reset to clear both)",
+        help="Remove 0036 overlay and restore meta/0.papgt (keeps mods/enabled/, mods/disabled/, and mods/available/)",
     )
     p_rs.add_argument("--game", default=None, metavar="PATH", help=game_help)
 
     p_dis = sub.add_parser(
         "disable",
-        help="Move one mod from mods/enabled/ to mods/disabled/ (non-destructive)",
+        help="Move one mod from mods/enabled/ to mods/disabled/ and sync the game immediately",
     )
     p_dis.add_argument("mod", help="Index from list (1,2,…) or file name / stem")
+    p_dis.add_argument("--game", default=None, metavar="PATH", help=game_help)
 
     p_rm = sub.add_parser(
         "remove",
-        help="Disable one mod and sync the game (apply, or restore if that was the last mod)",
+        help="Legacy alias for disable",
     )
     p_rm.add_argument("mod", help="Index from list (1,2,…) or file name / stem")
     p_rm.add_argument("--game", default=None, metavar="PATH", help=game_help)
 
     p_rst = sub.add_parser(
         "reset",
-        help="Restore vanilla game (restore) and clear all mods in mods/enabled/",
+        help="Restore vanilla game (restore) and clear only the active mods in mods/enabled/",
     )
     p_rst.add_argument("--game", default=None, metavar="PATH", help=game_help)
     p_rst.add_argument(
         "-y",
         "--yes",
         action="store_true",
-        help="Confirm reset without prompt (required when stdin is not a TTY)",
+        help="Confirm active-only reset without prompt (required when stdin is not a TTY)",
     )
 
     sub.add_parser("wizard", help="Interactive menu (full mod lifecycle)")
@@ -2030,10 +1936,6 @@ def _print_cli_banner():
 def main():
     argv = sys.argv[1:]
 
-    if argv and argv[0].startswith("--"):
-        main_legacy(argv)
-        return
-
     parser = _build_arg_parser()
     args = parser.parse_args(argv)
 
@@ -2085,7 +1987,7 @@ def main():
         return
 
     if args.command == "disable":
-        cmd_disable_enabled_mod(args.mod)
+        cmd_disable_enabled_mod(args.mod, game_arg)
         return
 
     if args.command == "remove":
