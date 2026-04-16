@@ -83,7 +83,25 @@ After you run `set-game` once, you normally do **not** need to pass `--game` aga
 ./mod_manager.py wizard
 ```
 
-Guided flow (wizard): install one selected variant, list enabled/disabled/available mods, disable a mod with immediate game sync, apply/restore/reset as needed, and start the game.
+The wizard is the “beginner” flow. It keeps choices simple and always works with:
+- `mods/enabled/` (active, used by `apply`)
+- `mods/disabled/` (parked)
+- `mods/available/` (archive)
+
+Menu (what each option does):
+1. `1` Install from folder (if the folder has multiple variants, you choose exactly one)
+2. `2` List enabled mods, then prompt: “Disable which mod? … (0 to go back)”
+3. `3` List disabled mods, then prompt: “Enable which mod? … (0 to go back)”
+4. `4` List available mods, then prompt: “Activate which mod? … (0 to go back)”
+5. `5` Disable a mod and sync the game
+6. `6` Apply mods to the game (build overlay `0036/`)
+7. `7` Restore game only (remove overlay; keep mod folders)
+8. `8` Reset active mods to vanilla (restore + clear `mods/enabled/`)
+9. `9` Status
+10. `10` Start game
+0. `0` Exit
+
+Tip: After `set-game` once, you usually don’t need `--game` again.
 
 ### Install Mods
 
