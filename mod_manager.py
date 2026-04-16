@@ -660,6 +660,27 @@ def cmd_status(game_opt: Optional[str] = None):
     o = "yes" if os.path.isdir(overlay) else "no (vanilla)"
     print(f"    {MOD_DIR_NAME}/ overlay   {o}")
 
+    # Show which mods are effectively applied through the overlay (0036/).
+    overlay_active = (
+        os.path.isdir(overlay)
+        and os.path.isfile(os.path.join(overlay, "0.paz"))
+        and os.path.isfile(os.path.join(overlay, "0.pamt"))
+    )
+    if overlay_active:
+        mods = load_modpatches(MODS_DIR)
+        if not mods:
+            info("Applied mods: (none — overlay exists but mods/enabled/ is empty)")
+        else:
+            info("Applied mods (from mods/enabled/):")
+            for mod in mods:
+                total_changes = sum(len(p.get("changes", [])) for p in mod.get("patches", []))
+                mod_file = Path(mod.get("_path", "")).name if mod.get("_path") else "?"
+                print(
+                    f"    - {mod.get('name', '?')} ({mod_file}): {total_changes} changes"
+                )
+    else:
+        info("Applied mods: vanilla (0036 overlay not active yet). Run `apply` to patch.")
+
     if sys.platform == "darwin":
         print()
         info(f'Open in Finder:  open "{GAME_DIR}"')
@@ -703,12 +724,14 @@ def run_wizard():
         print(f"{Style.BOLD}Choose an action:{Style.RESET}")
         print(f"  {Style.CYAN} 1){Style.RESET} 📦 Install mod(s) from folder")
         print(f"  {Style.CYAN} 2){Style.RESET} 📋 List enabled mods")
-        print(f"  {Style.CYAN} 3){Style.RESET} ⏸  Disable mod and sync game")
-        print(f"  {Style.CYAN} 4){Style.RESET} ✅ Apply mods to game")
-        print(f"  {Style.CYAN} 5){Style.RESET} ↩  Restore game only (vanilla overlay)")
-        print(f"  {Style.CYAN} 6){Style.RESET} ↺  Reset active mods to vanilla")
-        print(f"  {Style.CYAN} 7){Style.RESET} 📊 Status")
-        print(f"  {Style.CYAN} 8){Style.RESET} 🎮 Start game")
+        print(f"  {Style.CYAN} 3){Style.RESET} 📋 List disabled mods")
+        print(f"  {Style.CYAN} 4){Style.RESET} 📋 List available mods")
+        print(f"  {Style.CYAN} 5){Style.RESET} ⏸  Disable mod and sync game")
+        print(f"  {Style.CYAN} 6){Style.RESET} ✅ Apply mods to game")
+        print(f"  {Style.CYAN} 7){Style.RESET} ↩  Restore game only (vanilla overlay)")
+        print(f"  {Style.CYAN} 8){Style.RESET} ↺  Reset active mods to vanilla")
+        print(f"  {Style.CYAN} 9){Style.RESET} 📊 Status")
+        print(f"  {Style.CYAN}10){Style.RESET} 🎮 Start game")
         print(f"  {Style.CYAN} 0){Style.RESET} Exit")
         choice = input("> ").strip()
         print()
@@ -725,34 +748,67 @@ def run_wizard():
                 print()
             elif choice == "2":
                 cmd_list()
-                print()
-            elif choice == "3":
-                if not GAME_DIR and not _wizard_resolve_game():
-                    warn("Set game path first.")
-                    print()
-                    continue
-                cmd_list()
-                ident = input("Index or file name to disable: ").strip()
-                if ident:
+                ident = input("Disable which mod? (index/name, or 0 to go back): ").strip()
+                if ident and ident != "0":
+                    if not GAME_DIR and not _wizard_resolve_game():
+                        warn("Set game path first.")
+                        print()
+                        continue
                     cmd_disable_enabled_mod(ident)
                 print()
                 _wizard_summary()
                 print()
+            elif choice == "3":
+                cmd_disabled_list()
+                ident = input("Enable which mod? (index/name, or 0 to go back): ").strip()
+                if ident and ident != "0":
+                    if cmd_enable_mod(ident):
+                        if not GAME_DIR and not _wizard_resolve_game():
+                            warn("Set game path first.")
+                        else:
+                            cmd_apply()
+                print()
+                _wizard_summary()
+                print()
             elif choice == "4":
-                if not GAME_DIR and not _wizard_resolve_game():
-                    warn("Set game path first.")
-                    print()
-                    continue
-                cmd_apply()
+                cmd_available()
+                ident = input("Activate which mod? (index/name, or 0 to go back): ").strip()
+                if ident and ident != "0":
+                    if cmd_activate_available(ident):
+                        if not GAME_DIR and not _wizard_resolve_game():
+                            warn("Set game path first.")
+                        else:
+                            cmd_apply()
+                print()
+                _wizard_summary()
                 print()
             elif choice == "5":
                 if not GAME_DIR and not _wizard_resolve_game():
                     warn("Set game path first.")
                     print()
                     continue
-                cmd_uninstall()
+                cmd_list()
+                ident = input("Disable which mod? (index/name, or 0 to go back): ").strip()
+                if ident and ident != "0":
+                    cmd_disable_enabled_mod(ident)
+                print()
+                _wizard_summary()
                 print()
             elif choice == "6":
+                if not GAME_DIR and not _wizard_resolve_game():
+                    warn("Set game path first.")
+                    print()
+                    continue
+                cmd_apply()
+                print()
+            elif choice == "7":
+                if not GAME_DIR and not _wizard_resolve_game():
+                    warn("Set game path first.")
+                    print()
+                    continue
+                cmd_uninstall()
+                print()
+            elif choice == "8":
                 if not GAME_DIR and not _wizard_resolve_game():
                     warn("Set game path first.")
                     print()
@@ -761,10 +817,10 @@ def run_wizard():
                 print()
                 _wizard_summary()
                 print()
-            elif choice == "7":
+            elif choice == "9":
                 cmd_status()
                 print()
-            elif choice == "8":
+            elif choice == "10":
                 if not GAME_DIR and not _wizard_resolve_game():
                     warn("Set game path first.")
                     print()
@@ -775,7 +831,7 @@ def run_wizard():
                 info("Goodbye.")
                 return
             else:
-                warn("Invalid choice. Pick 0–8.")
+                warn("Invalid choice. Pick 0–10.")
                 print()
         except KeyboardInterrupt:
             print()
@@ -1021,11 +1077,6 @@ def cmd_purge_mod(identifier: str) -> bool:
         for p in files:
             if p.stem.lower() == identifier.lower() or p.name.lower() == identifier.lower():
                 p.unlink()
-                # Also clean up state
-                state = load_mod_state()
-                if p.name in state:
-                    del state[p.name]
-                    save_mod_state(state)
                 success(f"Purged: {p.name} (was in {label})")
                 return True
     error(f"No mod matches {identifier!r} in any directory.")
@@ -1035,7 +1086,7 @@ def cmd_purge_mod(identifier: str) -> bool:
 # ─── Patch listing & toggling ──────────────────────────────────────────
 
 def cmd_patches(identifier: str):
-    """List all patches in a mod with ON/OFF status and categories."""
+    """List all patches in a mod (grouped by category)."""
     # Find mod in enabled, disabled, or available
     mod_path = _find_mod_anywhere(identifier)
     if mod_path is None:
@@ -1048,28 +1099,22 @@ def cmd_patches(identifier: str):
         return
 
     flat = _flat_change_index(mod)
-    state = load_mod_state()
-    disabled = _get_disabled_changes(state, mod_path.name)
     cats = _group_changes_by_category(flat)
 
     total = len(flat)
-    enabled_count = total - len(disabled)
     name = mod.get("name", "?")
 
     print(f"\nPatches for {Style.BOLD}{name}{Style.RESET} ({mod_path.name})")
-    print(f"  Total: {total}, Enabled: {Style.GREEN}{enabled_count}{Style.RESET}, Disabled: {Style.RED}{len(disabled)}{Style.RESET}")
+    print(f"  Total: {total}")
     print()
 
     for cat_name in sorted(cats.keys()):
         entries = cats[cat_name]
-        cat_enabled = sum(1 for fi, _, _ in entries if fi not in disabled)
         cat_total = len(entries)
-        print(f"  {Style.BOLD}[{cat_name}]{Style.RESET}  {cat_enabled}/{cat_total} enabled")
+        print(f"  {Style.BOLD}[{cat_name}]{Style.RESET}  {cat_total} patches")
         for flat_idx, change, gf in entries:
             label = change.get("label", f"@{change.get('offset', '?')}")
-            is_on = flat_idx not in disabled
-            tag = f"{Style.GREEN}✅{Style.RESET}" if is_on else f"{Style.RED}❌{Style.RESET}"
-            print(f"    {flat_idx + 1:3d}) {tag} {label}")
+            print(f"    {flat_idx + 1:3d}) {label}")
         print()
 
 
@@ -1599,27 +1644,15 @@ def cmd_apply():
     for m in mods:
         print(f"  - {m.get('name', '?')}")
 
-    # ── Step 2: Group all changes by game_file (with patch-level filtering) ──
+    # ── Step 2: Group all changes by game_file ──
     # merged[game_file] = list of (mod_name, change)
-    state = load_mod_state()
     merged = defaultdict(list)
-    total_disabled = 0
     for mod in mods:
-        mod_name = mod.get('name', '?')
-        mod_key = Path(mod.get('_path', '')).name
-        disabled_changes = _get_disabled_changes(state, mod_key)
-        flat_idx = 0
-        for patch in mod.get('patches', []):
-            gf = patch['game_file']
-            for change in patch['changes']:
-                if flat_idx not in disabled_changes:
-                    merged[gf].append((mod_name, change))
-                else:
-                    total_disabled += 1
-                flat_idx += 1
-
-    if total_disabled:
-        info(f"Filtered out {total_disabled} disabled patch(es) via toggle state.")
+        mod_name = mod.get("name", "?")
+        for patch in mod.get("patches", []):
+            gf = patch["game_file"]
+            for change in patch["changes"]:
+                merged[gf].append((mod_name, change))
 
     print(f"\nTarget files ({len(merged)}):")
     for gf, changes in sorted(merged.items()):
@@ -1743,8 +1776,6 @@ def cmd_apply():
     # ── Summary ──
     print(f"\n{'='*60}")
     print(f"  {len(mods)} mod(s) merged into {MOD_DIR_NAME}/")
-    if total_disabled:
-        print(f"  {total_disabled} patch(es) skipped (disabled via toggle)")
     print(f"  {len(overlay_files)} game file(s) patched:")
     for of in overlay_files:
         print(f"    - {of['dir_path']}/{of['filename']}")
@@ -1896,24 +1927,9 @@ examples:
 
     p_pa = sub.add_parser(
         "patches",
-        help="List patches in a mod (with ON/OFF status and categories)",
+        help="List patches in a mod (grouped by category)",
     )
     p_pa.add_argument("mod", help="Mod index (from enabled list) or file name / stem")
-
-    p_tg = sub.add_parser(
-        "toggle",
-        help="Toggle patches ON/OFF: index, range (5-10), category ([Flight]), all, none",
-    )
-    p_tg.add_argument("mod", help="Mod index or file name / stem")
-    p_tg.add_argument("spec", nargs="+", help="Toggle spec: 5, 5-10, [Flight], all, none, 'on 5', 'off [Sprint]'")
-
-    p_tc = sub.add_parser(
-        "toggle-category",
-        help="Enable/disable all patches in one category",
-    )
-    p_tc.add_argument("mod", help="Mod index or file name / stem")
-    p_tc.add_argument("category", help="Category name without brackets (e.g. Flight)")
-    p_tc.add_argument("state", choices=["on", "off"], help="Turn category on or off")
 
     p_pu = sub.add_parser(
         "purge",
@@ -2017,15 +2033,6 @@ def main():
 
     if args.command == "patches":
         cmd_patches(args.mod)
-        return
-
-    if args.command == "toggle":
-        spec = " ".join(args.spec)
-        cmd_toggle_patch(args.mod, spec)
-        return
-
-    if args.command == "toggle-category":
-        cmd_toggle_category(args.mod, args.category, on=(args.state == "on"))
         return
 
     if args.command == "purge":

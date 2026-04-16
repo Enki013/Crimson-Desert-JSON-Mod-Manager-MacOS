@@ -46,7 +46,6 @@ It always writes modded data into the safe overlay folder `0036/`. The original 
 - `mods/available/` — installed archive copies (not active yet)
 - `mods/enabled/` — active mods used by `apply`
 - `mods/disabled/` — temporarily disabled mods (non-destructive)
-- `mods/_mod_state.json` — per-mod patch toggle state
 
 ## Requirements
 
@@ -84,7 +83,7 @@ After you run `set-game` once, you normally do **not** need to pass `--game` aga
 ./mod_manager.py wizard
 ```
 
-Guided flow (wizard): install one selected variant, view enabled mods, disable a mod with immediate game sync, apply/restore/reset as needed, and start the game.
+Guided flow (wizard): install one selected variant, list enabled/disabled/available mods, disable a mod with immediate game sync, apply/restore/reset as needed, and start the game.
 
 ### Install Mods
 
