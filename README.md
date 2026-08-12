@@ -6,15 +6,56 @@ A command-line tool for applying **JSON modpatch** files to **Crimson Desert** o
 
 The manager reads active modpatch files from `mods/enabled/` and builds a separate modded overlay in `0036/` instead of editing the original game data in `0008/`.
 
-High-level flow:
+### Apply Pipeline
 
+```mermaid
+graph LR
+    A["mods/enabled/\n*.json / *.modpatch"] --> B["Read & Group\nby game_file"]
+    B --> C["Locate data\nin 0008/0.pamt"]
+    C --> D["Decompress\n(lz4.block)"]
+    D --> E["Apply byte\npatches"]
+    E --> F["Recompress\n(lz4.block)"]
+    F --> G["Write to\n0036/0.paz\n0036/0.pamt"]
+    G --> H["Update\nmeta/0.papgt"]
+    H --> I["Game loads\noverlay 0036/"]
+
+    classDef input fill:#3498db,stroke:#2980b9,stroke-width:2px,color:#fff
+    classDef process fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff
+    classDef compress fill:#e67e22,stroke:#d35400,stroke-width:2px,color:#fff
+    classDef output fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff
+    classDef game fill:#1abc9c,stroke:#16a085,stroke-width:2px,color:#fff
+
+    class A input
+    class B,C process
+    class D,E,F compress
+    class G,H output
+    class I game
 ```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐    ┌──────────────────┐
-│ mods/enabled/   │ -> │ Merge patches    │ -> │ LZ4 patch       │ -> │ Write 0036/      │
-│ *.json          │    │ per game_file    │    │ (read 0008/.paz)│    │ + meta/0.papgt   │
-└─────────────────┘    └──────────────────┘    └─────────────────┘    └──────────────────┘
-        │
-        └-> install / disable / apply / restore / reset
+
+### Mod Lifecycle
+
+```mermaid
+graph TD
+    DL["Downloaded\nmod folder"] -->|install| AV["mods/available/\n(archive)"]
+    AV -->|install --pick| EN["mods/enabled/\n(active)"]
+    EN -->|apply| OV["0036/ Overlay\n(patched game data)"]
+    OV -->|"restore / reset"| VA["Vanilla game\n(0008/ untouched)"]
+    EN -->|disable| DIS["mods/disabled/\n(parked)"]
+    DIS -->|enable| EN
+
+    classDef source fill:#3498db,stroke:#2980b9,stroke-width:2px,color:#fff
+    classDef store fill:#34495e,stroke:#2c3e50,stroke-width:2px,color:#fff
+    classDef active fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:#fff
+    classDef overlay fill:#9b59b6,stroke:#8e44ad,stroke-width:2px,color:#fff
+    classDef vanilla fill:#1abc9c,stroke:#16a085,stroke-width:2px,color:#fff
+    classDef parked fill:#e67e22,stroke:#d35400,stroke-width:2px,color:#fff
+
+    class DL source
+    class AV store
+    class EN active
+    class OV overlay
+    class VA vanilla
+    class DIS parked
 ```
 
 1. Read active `*.json` / `*.modpatch` files from `mods/enabled/`.
